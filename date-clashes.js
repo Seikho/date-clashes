@@ -9,7 +9,10 @@ var Clash = (function () {
         var _this = this;
         var extremities = this.getExtremities(dates);
         var start = this.floorDate(extremities.start);
-        var clashes = {};
+        var clashes = {
+            start: extremities.start,
+            end: extremities.end
+        };
         var ranges = dates.map(this.getRange);
         var allValidRanges = ranges.every(this.isRange);
         if (!allValidRanges)
@@ -23,8 +26,6 @@ var Clash = (function () {
             clashes[index].date = start;
             start = end;
         }
-        clashes.start = extremities.start;
-        clashes.end = extremities.end;
         return clashes;
     };
     Clash.prototype.getExtremities = function (dates) {

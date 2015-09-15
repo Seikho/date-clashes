@@ -13,7 +13,10 @@ class Clash {
         var extremities = this.getExtremities(dates);
 
         var start = this.floorDate(extremities.start);
-        var clashes: any = {};
+        var clashes: Clashes = {
+            start: extremities.start,
+            end: extremities.end
+        };
 
         var ranges = dates.map(this.getRange);
         var allValidRanges = ranges.every(this.isRange);
@@ -31,9 +34,6 @@ class Clash {
 
             start = end;
         }
-        
-        clashes.start = extremities.start;
-        clashes.end = extremities.end;
         
         return clashes;
     }
@@ -94,4 +94,10 @@ interface Range {
     start: Date,
     end: Date,
     [key: string]: any;
+}
+
+interface Clashes {
+    start: Date;
+    end: Date;
+    [index: number]: { date: Date, clashes: Range[] }
 }
