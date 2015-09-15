@@ -1,5 +1,8 @@
 var Clash = (function () {
     function Clash(rangeGetter) {
+        this.getRange = function (dates) { return dates; };
+        if (!rangeGetter)
+            return;
         this.getRange = rangeGetter;
     }
     Clash.prototype.flatten = function (dates) {

@@ -1,11 +1,13 @@
 export = Clash;
 
 class Clash {
-    constructor(rangeGetter: RangeGetter) {
+    constructor(rangeGetter?: RangeGetter) {
+        if (!rangeGetter) return;
+        
         this.getRange = rangeGetter;
     }
 
-    getRange: RangeGetter;
+    getRange: RangeGetter = (dates: any) => dates;
 
     flatten(dates: any[]) {
         var extremities = this.getExtremities(dates);
@@ -17,15 +19,15 @@ class Clash {
         while (start < extremities.end) {
             var end = this.ceilingDate(start);
             var clashRange = { start, end };
-            
+
             var innerClashes = [];
-            
+
             clashes[index].clashes = ranges.filter(range => this.isDateClashing(clashRange, range));
             clashes[index].date = start;
 
             start = end;
         }
-        
+
         return clashes;
     }
 
