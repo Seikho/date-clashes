@@ -11,6 +11,9 @@ var Clash = (function () {
         var start = this.floorDate(extremities.start);
         var clashes = {};
         var ranges = dates.map(this.getRange);
+        var allValidRanges = ranges.every(this.isRange);
+        if (!allValidRanges)
+            throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
         var index = 1;
         while (start < extremities.end) {
             var end = this.ceilingDate(start);
@@ -20,6 +23,8 @@ var Clash = (function () {
             clashes[index].date = start;
             start = end;
         }
+        clashes.start = extremities.start;
+        clashes.end = extremities.end;
         return clashes;
     };
     Clash.prototype.getExtremities = function (dates) {
@@ -54,6 +59,11 @@ var Clash = (function () {
         var startsWithin = rightRange.start >= leftRange.start && rightRange.start <= leftRange.end;
         var endsWithin = rightRange.end >= leftRange.start && rightRange.end <= leftRange.end;
         return startsWithin || endsWithin;
+    };
+    Clash.prototype.isRange = function (range) {
+        var startIsDate = range.start instanceof Date;
+        var endIsDate = range.end instanceof Date;
+        return startIsDate && endIsDate;
     };
     return Clash;
 })();

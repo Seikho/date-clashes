@@ -3,7 +3,7 @@ export = Clash;
 class Clash {
     constructor(rangeGetter?: RangeGetter) {
         if (!rangeGetter) return;
-        
+
         this.getRange = rangeGetter;
     }
 
@@ -14,7 +14,11 @@ class Clash {
 
         var start = this.floorDate(extremities.start);
         var clashes: any = {};
+
         var ranges = dates.map(this.getRange);
+        var allValidRanges = ranges.every(this.isRange);
+        if (!allValidRanges) throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
+
         var index = 1;
         while (start < extremities.end) {
             var end = this.ceilingDate(start);
@@ -27,7 +31,10 @@ class Clash {
 
             start = end;
         }
-
+        
+        clashes.start = extremities.start;
+        clashes.end = extremities.end;
+        
         return clashes;
     }
 
@@ -70,6 +77,13 @@ class Clash {
 
         return startsWithin || endsWithin;
     }
+
+    isRange(range: Range): boolean {
+        var startIsDate = range.start instanceof Date;
+        var endIsDate = range.end instanceof Date;
+
+        return startIsDate && endIsDate;
+    }
 }
 
 interface RangeGetter {
@@ -79,6 +93,5 @@ interface RangeGetter {
 interface Range {
     start: Date,
     end: Date,
-    id: any;
     [key: string]: any;
 }
