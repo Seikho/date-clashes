@@ -27,6 +27,7 @@ var Clash = (function () {
                 clashes: ranges.filter(function (range) { return _this.isDateClashing(clashRange, range); })
             };
             start = end;
+            ++index;
         }
         return clashes;
     };

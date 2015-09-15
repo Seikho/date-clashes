@@ -24,7 +24,7 @@ class Clash {
 
         var index = 1;
         while (start < extremities.end) {
-            var end = this.ceilingDate(start);
+            var end = this.ceilingDate(start);            
             var clashRange = { start, end };
 
             var innerClashes = [];
@@ -35,6 +35,7 @@ class Clash {
             };
 
             start = end;
+            ++index;
         }
         
         return clashes;
