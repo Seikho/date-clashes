@@ -2,9 +2,8 @@ import Types = require("date-clashes");
 import RangeGetter = Types.RangeGetter;
 import Range = Types.Range;
 import Clashes = Types.Clashes;
-export = Clash;
 
-class Clash implements Types.Clash {
+export class Clash implements Types.Clash {
     constructor(rangeGetter?: RangeGetter) {
         if (!rangeGetter) return;
 

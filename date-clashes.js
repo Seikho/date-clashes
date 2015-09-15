@@ -71,5 +71,5 @@ var Clash = (function () {
     };
     return Clash;
 })();
-module.exports = Clash;
+exports.Clash = Clash;
 //# sourceMappingURL=date-clashes.js.map

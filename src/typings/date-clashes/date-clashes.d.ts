@@ -8,6 +8,8 @@ declare module "date-clashes" {
         floorDate(date: Date): Date;
         ceilingDate(date: Date): Date;
         isRange(range: Range): boolean;
+        
+        
     }
 
     interface RangeGetter {

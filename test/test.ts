@@ -1,4 +1,4 @@
-import Clash = require("../date-clashes");
+import DateClash = require("../date-clashes");
 import chai = require("chai");
 var expect = chai.expect;
 
@@ -11,7 +11,7 @@ var sampleDate = [
     { start: newDate(8), end: newDate(8) },
 ]
 
-var clash = new Clash();
+var clash = new DateClash.Clash();
 var clashes = clash.flatten(sampleDate);
 console.log(clashes);
 

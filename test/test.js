@@ -1,4 +1,4 @@
-var Clash = require("../date-clashes");
+var DateClash = require("../date-clashes");
 var chai = require("chai");
 var expect = chai.expect;
 var sampleDate = [
@@ -9,7 +9,7 @@ var sampleDate = [
     { start: newDate(8), end: newDate(8) },
     { start: newDate(8), end: newDate(8) },
 ];
-var clash = new Clash();
+var clash = new DateClash.Clash();
 var clashes = clash.flatten(sampleDate);
 console.log(clashes);
 describe("Date clash tests", function () {
