@@ -81,7 +81,8 @@ export class Clash implements Types.Clash {
         var startsWithin = rightRange.start >= leftRange.start && rightRange.start <= leftRange.end;
         var endsWithin = rightRange.end >= leftRange.start && rightRange.end <= leftRange.end;
 
-        return startsWithin || endsWithin;
+        var encapsulates = rightRange.start <= leftRange.start && rightRange.end >= leftRange.end;
+        return startsWithin || endsWithin || encapsulates;
     }
 
     isRange(range: Range): boolean {

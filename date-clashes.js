@@ -62,7 +62,8 @@ var Clash = (function () {
     Clash.prototype.isDateClashing = function (leftRange, rightRange) {
         var startsWithin = rightRange.start >= leftRange.start && rightRange.start <= leftRange.end;
         var endsWithin = rightRange.end >= leftRange.start && rightRange.end <= leftRange.end;
-        return startsWithin || endsWithin;
+        var encapsulates = rightRange.start <= leftRange.start && rightRange.end >= leftRange.end;
+        return startsWithin || endsWithin || encapsulates;
     };
     Clash.prototype.isRange = function (range) {
         var startIsDate = range.start instanceof Date;
