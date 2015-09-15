@@ -22,8 +22,10 @@ var Clash = (function () {
             var end = this.ceilingDate(start);
             var clashRange = { start: start, end: end };
             var innerClashes = [];
-            clashes[index].clashes = ranges.filter(function (range) { return _this.isDateClashing(clashRange, range); });
-            clashes[index].date = start;
+            clashes[index] = {
+                date: start,
+                clashes: ranges.filter(function (range) { return _this.isDateClashing(clashRange, range); })
+            };
             start = end;
         }
         return clashes;
@@ -53,7 +55,7 @@ var Clash = (function () {
         return downDate;
     };
     Clash.prototype.ceilingDate = function (date) {
-        var upDate = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
+        var upDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
         return upDate;
     };
     Clash.prototype.isDateClashing = function (leftRange, rightRange) {

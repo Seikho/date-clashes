@@ -28,9 +28,11 @@ class Clash {
             var clashRange = { start, end };
 
             var innerClashes = [];
-
-            clashes[index].clashes = ranges.filter(range => this.isDateClashing(clashRange, range));
-            clashes[index].date = start;
+            
+            clashes[index] = {
+                date: start,
+                clashes: ranges.filter(range => this.isDateClashing(clashRange, range))
+            };
 
             start = end;
         }
@@ -66,7 +68,7 @@ class Clash {
     }
 
     ceilingDate(date: Date): Date {
-        var upDate = new Date(date.getFullYear(), date.getMonth() + 1, date.getDate());
+        var upDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
         return upDate;
     }
 
