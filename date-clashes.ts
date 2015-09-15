@@ -1,6 +1,10 @@
+import Types = require("date-clashes"); 
+import RangeGetter = Types.RangeGetter;
+import Range = Types.Range;
+import Clashes = Types.Clashes;
 export = Clash;
 
-class Clash {
+class Clash implements Types.Clash {
     constructor(rangeGetter?: RangeGetter) {
         if (!rangeGetter) return;
 
@@ -89,18 +93,3 @@ class Clash {
     }
 }
 
-interface RangeGetter {
-    (dates: any): Range;
-}
-
-interface Range {
-    start: Date,
-    end: Date,
-    [key: string]: any;
-}
-
-interface Clashes {
-    start: Date;
-    end: Date;
-    [index: number]: { date: Date, clashes: Range[] }
-}
