@@ -5,11 +5,9 @@ declare module "date-clashes" {
         getRange: RangeGetter;
         flatten(dates: any[], options?: Options): Clashes;
         getExtremities(dates: any[]): Range;
-        floorDate(date: Date): Date;
-        ceilingDate(date: Date): Date;
-        isRange(range: Range): boolean;
-        
-        
+        floorDate(date: Date, day?: number): Date;
+        ceilingDate(date: Date, day?: number): Date;
+        isRange(range: Range): boolean;   
     }
 
     interface RangeGetter {
