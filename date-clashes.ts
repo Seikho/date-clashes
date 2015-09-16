@@ -1,7 +1,8 @@
-import Types = require("date-clashes"); 
+import Types = require("date-clashes");
 import RangeGetter = Types.RangeGetter;
 import Range = Types.Range;
 import Clashes = Types.Clashes;
+import Options = Types.Options;
 
 export class Clash implements Types.Clash {
     constructor(rangeGetter?: RangeGetter) {
@@ -12,8 +13,16 @@ export class Clash implements Types.Clash {
 
     getRange: RangeGetter = (dates: any) => dates;
 
-    flatten(dates: any[]) {
+    flatten(dates: any[], options?: Options) {
+        options = options || { startDay: null, endDay: null };
+
         var extremities = this.getExtremities(dates);
+
+        if (options.startDay != null)
+            extremities.start = this.floorDate(extremities.start, options.startDay);
+
+        if (options.endDay != null)
+            extremities.end = this.ceilingDate(extremities.end, options.endDay);
 
         var start = this.floorDate(extremities.start);
         var clashes: Clashes = {
@@ -27,11 +36,11 @@ export class Clash implements Types.Clash {
 
         var index = 1;
         while (start < extremities.end) {
-            var end = this.ceilingDate(start);            
+            var end = this.ceilingDate(start);
             var clashRange = { start, end };
 
             var innerClashes = [];
-            
+
             clashes[index] = {
                 date: start,
                 clashes: ranges.filter(range => this.isDateClashing(clashRange, range))
@@ -40,7 +49,7 @@ export class Clash implements Types.Clash {
             start = end;
             ++index;
         }
-        
+
         return clashes;
     }
 
@@ -66,13 +75,27 @@ export class Clash implements Types.Clash {
         };
     }
 
-    floorDate(date: Date): Date {
+    floorDate(date: Date, day?: number): Date {
+        if (day < 0 || day > 6) day = null;
         var downDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+        if (day == null || downDate.getDay() === day) return downDate;
+
+        while (downDate.getDay() !== day)
+            downDate.setDate(downDate.getDate() - 1);
+        
         return downDate;
     }
 
-    ceilingDate(date: Date): Date {
+    ceilingDate(date: Date, day?: number): Date {
+        if (day < 0 || day > 6) day = null;
         var upDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+
+        if (day == null || upDate.getDay() === day) return upDate;
+        
+        while (upDate.getDay() !== day)
+            upDate.setDate(upDate.getDate() + 1);
+        
         return upDate;
     }
 
@@ -81,8 +104,9 @@ export class Clash implements Types.Clash {
         var startsWithin = rightRange.start >= leftRange.start && rightRange.start <= leftRange.end;
         var endsWithin = rightRange.end >= leftRange.start && rightRange.end <= leftRange.end;
 
-        var encapsulates = rightRange.start <= leftRange.start && rightRange.end >= leftRange.end;
-        return startsWithin || endsWithin || encapsulates;
+        var rightEncapsulates = rightRange.start <= leftRange.start && rightRange.end >= leftRange.end;
+        var leftEncapsulates = leftRange.start <= rightRange.start && leftRange.end >= rightRange.end;
+        return startsWithin || endsWithin || rightEncapsulates || leftEncapsulates;
     }
 
     isRange(range: Range): boolean {

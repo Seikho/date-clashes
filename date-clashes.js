@@ -5,9 +5,14 @@ var Clash = (function () {
             return;
         this.getRange = rangeGetter;
     }
-    Clash.prototype.flatten = function (dates) {
+    Clash.prototype.flatten = function (dates, options) {
         var _this = this;
+        options = options || { startDay: null, endDay: null };
         var extremities = this.getExtremities(dates);
+        if (options.startDay != null)
+            extremities.start = this.floorDate(extremities.start, options.startDay);
+        if (options.endDay != null)
+            extremities.end = this.ceilingDate(extremities.end, options.endDay);
         var start = this.floorDate(extremities.start);
         var clashes = {
             start: extremities.start,
@@ -51,19 +56,32 @@ var Clash = (function () {
             end: upperBound
         };
     };
-    Clash.prototype.floorDate = function (date) {
+    Clash.prototype.floorDate = function (date, day) {
+        if (day < 0 || day > 6)
+            day = null;
         var downDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        if (day == null || downDate.getDay() === day)
+            return downDate;
+        while (downDate.getDay() !== day)
+            downDate.setDate(downDate.getDate() - 1);
         return downDate;
     };
-    Clash.prototype.ceilingDate = function (date) {
+    Clash.prototype.ceilingDate = function (date, day) {
+        if (day < 0 || day > 6)
+            day = null;
         var upDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+        if (day == null || upDate.getDay() === day)
+            return upDate;
+        while (upDate.getDay() !== day)
+            upDate.setDate(upDate.getDate() + 1);
         return upDate;
     };
     Clash.prototype.isDateClashing = function (leftRange, rightRange) {
         var startsWithin = rightRange.start >= leftRange.start && rightRange.start <= leftRange.end;
         var endsWithin = rightRange.end >= leftRange.start && rightRange.end <= leftRange.end;
-        var encapsulates = rightRange.start <= leftRange.start && rightRange.end >= leftRange.end;
-        return startsWithin || endsWithin || encapsulates;
+        var rightEncapsulates = rightRange.start <= leftRange.start && rightRange.end >= leftRange.end;
+        var leftEncapsulates = leftRange.start <= rightRange.start && leftRange.end >= rightRange.end;
+        return startsWithin || endsWithin || rightEncapsulates || leftEncapsulates;
     };
     Clash.prototype.isRange = function (range) {
         var startIsDate = range.start instanceof Date;
