@@ -12,14 +12,18 @@ var myDates = [
    ...
 ];
 
-var Clash = require("date-clashes");
+var DateClash = require("date-clashes");
 
 // Supply the constructor with instructions on how to parse your date objects
 // The function must return an object that matches the 'Range' interface below
-var clash = new Clash(date => { return { start: date.s, end: date.e, id: date.id } });
+var clash = new DateClash.Clash(date => { return { start: date.s, end: date.e, id: date.id } });
 
 // Detect the clashes
 var clashes = clash.flatten(myDates);
+
+// Make the clash 'window'/'extremities' fall on particular days of the week
+// 0 = Sunday, 6 = Saturday
+var clashes = clash.flatten(myDates, { startDay: 1 /* Monday */, endDay: 0 /* Sunday */ });
 
 // Returns an object of type Clashes that looks like:
 {
@@ -46,6 +50,52 @@ interface Range {
     [key: string]: any;
 }
 ```
+
+### API
+
+##### Constructor
+```javascript
+constructor(rangeGetter?: RangeGetter);
+```
+
+##### RangeGetter
+A function that takes an object and returns an object that `date-clashes` can understand (`Range`)  
+The object *must* contain a `start` and `end` property which must be `Date` objects.  
+
+Example:
+```javascript
+function rangeGetter(myObject) {
+    return {
+        start: new Date(myObject.startDate),
+        end: new Date(myObject.endDate),
+        id: myObject.id,
+        firstName: myObject.firstName,
+        lastName: myObject.lastName
+    };
+}
+
+var clash = new DateClash.Clash(rangeGetter);
+```
+
+##### Flatten
+The function that does all of the work.  
+Takes an array of objects that your `rangeGetter` function can parse.
+```javascript
+function flatten(dates: Array<any>, options?: Options) => Clashes;
+```
+
+##### Options
+An optional object that has two optional properties:  
+`startDay` and `endDay`  
+These options will determine the day number of outer-extremities of the returned `Clashes` object.
+
+```javascript
+{
+    startDay: number,
+    endDay: number
+}
+```
+
 
 ### License
 MIT
