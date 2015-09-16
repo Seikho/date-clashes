@@ -22,6 +22,18 @@ describe("Date clash tests", () => {
         expect(isSameDate(clashes.end, ceil(newDate(8)))).to.be.true;
     });
     
+    it("will correctly calculate extremities when provided startDay and endDay options", () => {
+        var innerClashes = clash.flatten(sampleDate, { startDay: 0, endDay: 6 });
+        var start = innerClashes.start;
+        var end = innerClashes.end;
+        var now = new Date();
+        var future = newDate(8);
+        expect(start < now).to.be.true;
+        expect(future < end).to.be.true;
+        expect(start.getDay()).to.equal(0);
+        expect(end.getDay()).to.equal(6);
+    });
+    
     it("will have the correct amount of day properties", () => {
         expect(Object.keys(clashes).length).to.equal(11);
     });
@@ -38,6 +50,7 @@ describe("Date clash tests", () => {
        expect(clashes['5'].clashes.length).to.equal(0);
        expect(clashes['8'].clashes.length).to.equal(0); 
     });
+   
 });
 
 function addDays(days: number, date: Date) {
