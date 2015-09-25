@@ -62,4 +62,3 @@ function floor(date) {
 function ceil(date) {
     return clash.ceilingDate(date);
 }
-//# sourceMappingURL=test.js.map
