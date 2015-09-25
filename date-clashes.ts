@@ -1,4 +1,4 @@
-import Types = require("date-clashes");
+import * as Types from './index.d.ts';
 import RangeGetter = Types.RangeGetter;
 import Range = Types.Range;
 import Clashes = Types.Clashes;
