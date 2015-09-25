@@ -2,6 +2,5 @@ test/
 node_modules
 .git/
 tsd.json
-*.ts
 *.map
 *.log
