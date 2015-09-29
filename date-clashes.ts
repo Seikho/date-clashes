@@ -60,14 +60,13 @@ export class Clash implements Types.Clash {
         return clashes;
     }
 
-    getExtremities(dates: any[]) {
+    getExtremities(dates: Range[]) {
         var lowerBound = null;
         var upperBound = null;
 
         dates.forEach(date => {
-            var range = this.getRange(date);
-            var floor = this.floorDate(range.start);
-            var ceil = this.ceilingDate(range.end);
+            var floor = this.floorDate(date.start);
+            var ceil = this.ceilingDate(date.end);
 
             var floorIsLower = lowerBound == null || floor < lowerBound;
             if (floorIsLower) lowerBound = floor;

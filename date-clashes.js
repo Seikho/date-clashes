@@ -47,9 +47,8 @@ var Clash = (function () {
         var lowerBound = null;
         var upperBound = null;
         dates.forEach(function (date) {
-            var range = _this.getRange(date);
-            var floor = _this.floorDate(range.start);
-            var ceil = _this.ceilingDate(range.end);
+            var floor = _this.floorDate(date.start);
+            var ceil = _this.ceilingDate(date.end);
             var floorIsLower = lowerBound == null || floor < lowerBound;
             if (floorIsLower)
                 lowerBound = floor;
