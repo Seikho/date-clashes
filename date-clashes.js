@@ -1,66 +1,65 @@
 var Clash = (function () {
     function Clash(rangeGetter) {
+        var _this = this;
         this.getRange = function (dates) { return dates; };
+        this.flatten = function (dates, options) {
+            options = options || { startDay: null, endDay: null };
+            var objects = dates.map(function (d) {
+                var range = _this.getRange(d);
+                range.value = d;
+                return range;
+            });
+            var allValidRanges = objects.every(_this.isRange);
+            if (!allValidRanges)
+                throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
+            var extremities = _this.getExtremities(objects);
+            if (options.startDay != null)
+                extremities.start = _this.floorDate(extremities.start, options.startDay);
+            if (options.endDay != null)
+                extremities.end = _this.ceilingDate(extremities.end, options.endDay);
+            var start = _this.floorDate(extremities.start);
+            var clashes = {
+                start: extremities.start,
+                end: extremities.end
+            };
+            var index = 1;
+            while (start < extremities.end) {
+                var end = _this.ceilingDate(start);
+                var clashRange = { start: start, end: end };
+                var innerClashes = [];
+                clashes[index] = {
+                    date: start,
+                    clashes: objects
+                        .filter(function (range) { return _this.isDateClashing(clashRange, range); })
+                        .map(function (o) { return o.value; })
+                };
+                start = end;
+                ++index;
+            }
+            return clashes;
+        };
+        this.getExtremities = function (dates) {
+            var lowerBound = null;
+            var upperBound = null;
+            dates.forEach(function (date) {
+                var floor = _this.floorDate(date.start);
+                var ceil = _this.ceilingDate(date.end);
+                var floorIsLower = lowerBound == null || floor < lowerBound;
+                if (floorIsLower)
+                    lowerBound = floor;
+                var ceilIsHigher = upperBound == null || ceil > upperBound;
+                if (ceilIsHigher)
+                    upperBound = ceil;
+            });
+            return {
+                start: lowerBound,
+                end: upperBound
+            };
+        };
         if (!rangeGetter)
             return;
         this.getRange = rangeGetter;
     }
-    Clash.prototype.flatten = function (dates, options) {
-        var _this = this;
-        options = options || { startDay: null, endDay: null };
-        var objects = dates.map(function (d) {
-            var range = _this.getRange(d);
-            range.value = d;
-            return range;
-        });
-        var allValidRanges = objects.every(this.isRange);
-        if (!allValidRanges)
-            throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
-        var extremities = this.getExtremities(objects);
-        if (options.startDay != null)
-            extremities.start = this.floorDate(extremities.start, options.startDay);
-        if (options.endDay != null)
-            extremities.end = this.ceilingDate(extremities.end, options.endDay);
-        var start = this.floorDate(extremities.start);
-        var clashes = {
-            start: extremities.start,
-            end: extremities.end
-        };
-        var index = 1;
-        while (start < extremities.end) {
-            var end = this.ceilingDate(start);
-            var clashRange = { start: start, end: end };
-            var innerClashes = [];
-            clashes[index] = {
-                date: start,
-                clashes: objects
-                    .filter(function (range) { return _this.isDateClashing(clashRange, range); })
-                    .map(function (o) { return o.value; })
-            };
-            start = end;
-            ++index;
-        }
-        return clashes;
-    };
-    Clash.prototype.getExtremities = function (dates) {
-        var _this = this;
-        var lowerBound = null;
-        var upperBound = null;
-        dates.forEach(function (date) {
-            var floor = _this.floorDate(date.start);
-            var ceil = _this.ceilingDate(date.end);
-            var floorIsLower = lowerBound == null || floor < lowerBound;
-            if (floorIsLower)
-                lowerBound = floor;
-            var ceilIsHigher = upperBound == null || ceil > upperBound;
-            if (ceilIsHigher)
-                upperBound = ceil;
-        });
-        return {
-            start: lowerBound,
-            end: upperBound
-        };
-    };
     Clash.prototype.floorDate = function (date, day) {
         if (day < 0 || day > 6)
             day = null;

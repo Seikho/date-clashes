@@ -13,7 +13,7 @@ export class Clash implements Types.Clash {
 
     getRange: RangeGetter = (dates: any) => dates;
 
-    flatten(dates: any[], options?: Options) {
+    flatten = (dates: any[], options?: Options) => {
         options = options || { startDay: null, endDay: null };
 
         var objects = dates.map(d => {
@@ -60,7 +60,7 @@ export class Clash implements Types.Clash {
         return clashes;
     }
 
-    getExtremities(dates: Range[]) {
+    getExtremities = (dates: Range[]) => {
         var lowerBound = null;
         var upperBound = null;
 
