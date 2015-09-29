@@ -8,7 +8,15 @@ var Clash = (function () {
     Clash.prototype.flatten = function (dates, options) {
         var _this = this;
         options = options || { startDay: null, endDay: null };
-        var extremities = this.getExtremities(dates);
+        var objects = dates.map(function (d) {
+            var range = _this.getRange(d);
+            range.value = d;
+            return range;
+        });
+        var allValidRanges = objects.every(this.isRange);
+        if (!allValidRanges)
+            throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
+        var extremities = this.getExtremities(objects);
         if (options.startDay != null)
             extremities.start = this.floorDate(extremities.start, options.startDay);
         if (options.endDay != null)
@@ -18,10 +26,6 @@ var Clash = (function () {
             start: extremities.start,
             end: extremities.end
         };
-        var ranges = dates.map(this.getRange);
-        var allValidRanges = ranges.every(this.isRange);
-        if (!allValidRanges)
-            throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
         var index = 1;
         while (start < extremities.end) {
             var end = this.ceilingDate(start);
@@ -29,7 +33,9 @@ var Clash = (function () {
             var innerClashes = [];
             clashes[index] = {
                 date: start,
-                clashes: ranges.filter(function (range) { return _this.isDateClashing(clashRange, range); })
+                clashes: objects
+                    .filter(function (range) { return _this.isDateClashing(clashRange, range); })
+                    .map(function (o) { return o.value; })
             };
             start = end;
             ++index;

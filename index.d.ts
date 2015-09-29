@@ -16,7 +16,7 @@ export interface RangeGetter {
 export interface Range {
     start: Date,
     end: Date,
-    [key: string]: any;
+    value?: any;
 }
 
 export interface Clashes {

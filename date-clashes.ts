@@ -16,7 +16,16 @@ export class Clash implements Types.Clash {
     flatten(dates: any[], options?: Options) {
         options = options || { startDay: null, endDay: null };
 
-        var extremities = this.getExtremities(dates);
+        var objects = dates.map(d => {
+            var range = this.getRange(d);
+            range.value = d;
+            return range;
+        });
+
+        var allValidRanges = objects.every(this.isRange);
+        if (!allValidRanges) throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
+
+        var extremities = this.getExtremities(objects);
 
         if (options.startDay != null)
             extremities.start = this.floorDate(extremities.start, options.startDay);
@@ -30,10 +39,6 @@ export class Clash implements Types.Clash {
             end: extremities.end
         };
 
-        var ranges = dates.map(this.getRange);
-        var allValidRanges = ranges.every(this.isRange);
-        if (!allValidRanges) throw new Error("Invalid range objects in range collection. RangeGetter must return type { start: Date, end: Date }");
-
         var index = 1;
         while (start < extremities.end) {
             var end = this.ceilingDate(start);
@@ -43,7 +48,9 @@ export class Clash implements Types.Clash {
 
             clashes[index] = {
                 date: start,
-                clashes: ranges.filter(range => this.isDateClashing(clashRange, range))
+                clashes: objects
+                    .filter(range => this.isDateClashing(clashRange, range))
+                    .map(o => o.value)
             };
 
             start = end;
@@ -83,7 +90,7 @@ export class Clash implements Types.Clash {
 
         while (downDate.getDay() !== day)
             downDate.setDate(downDate.getDate() - 1);
-        
+
         return downDate;
     }
 
@@ -92,10 +99,10 @@ export class Clash implements Types.Clash {
         var upDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
 
         if (day == null || upDate.getDay() === day) return upDate;
-        
+
         while (upDate.getDay() !== day)
             upDate.setDate(upDate.getDate() + 1);
-        
+
         return upDate;
     }
 
