@@ -1,7 +1,7 @@
 import * as Types from './index.d.ts';
 import RangeGetter = Types.RangeGetter;
 import Range = Types.Range;
-import Clashes = Types.Clashes;
+import FlattenResult = Types.FlattenResult;
 import Options = Types.Options;
 
 export class Clash implements Types.Clash {
@@ -34,9 +34,10 @@ export class Clash implements Types.Clash {
             extremities.end = this.ceilingDate(extremities.end, options.endDay);
 
         var start = this.floorDate(extremities.start);
-        var clashes: Clashes = {
+        var result: FlattenResult = {
             start: extremities.start,
-            end: extremities.end
+            end: extremities.end,
+            days: {}
         };
 
         var index = 1;
@@ -46,7 +47,7 @@ export class Clash implements Types.Clash {
 
             var innerClashes = [];
 
-            clashes[index] = {
+            result.days[index] = {
                 date: start,
                 clashes: objects
                     .filter(range => this.isDateClashing(clashRange, range))
@@ -57,7 +58,7 @@ export class Clash implements Types.Clash {
             ++index;
         }
 
-        return clashes;
+        return result;
     }
 
     getExtremities = (dates: Range[]) => {

@@ -2,7 +2,7 @@ export class Clash {
     constructor(rangeGetter?: RangeGetter);
 
     getRange: RangeGetter;
-    flatten(dates: any[], options?: Options): Clashes;
+    flatten(dates: any[], options?: Options): FlattenResult;
     getExtremities(dates: any[]): Range;
     floorDate(date: Date, day?: number): Date;
     ceilingDate(date: Date, day?: number): Date;
@@ -19,10 +19,9 @@ export interface Range {
     value?: any;
 }
 
-export interface Clashes {
-    start: Date;
-    end: Date;
-    [index: number]: { date: Date, clashes: Range[] }
+export interface DayClash {
+    date: Date;
+    clashes: any[]
 }
 
 export interface Options {
@@ -30,3 +29,8 @@ export interface Options {
     endDay?: number;
 }
 
+export interface FlattenResult {
+    start: Date;
+    end: Date;
+    days: { [dayNumber: number]: DayClash };
+}

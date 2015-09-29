@@ -18,16 +18,17 @@ var Clash = (function () {
             if (options.endDay != null)
                 extremities.end = _this.ceilingDate(extremities.end, options.endDay);
             var start = _this.floorDate(extremities.start);
-            var clashes = {
+            var result = {
                 start: extremities.start,
-                end: extremities.end
+                end: extremities.end,
+                days: {}
             };
             var index = 1;
             while (start < extremities.end) {
                 var end = _this.ceilingDate(start);
                 var clashRange = { start: start, end: end };
                 var innerClashes = [];
-                clashes[index] = {
+                result.days[index] = {
                     date: start,
                     clashes: objects
                         .filter(function (range) { return _this.isDateClashing(clashRange, range); })
@@ -36,7 +37,7 @@ var Clash = (function () {
                 start = end;
                 ++index;
             }
-            return clashes;
+            return result;
         };
         this.getExtremities = function (dates) {
             var lowerBound = null;
