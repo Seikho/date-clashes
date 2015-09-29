@@ -2,9 +2,9 @@ var Clash = (function () {
     function Clash(rangeGetter) {
         var _this = this;
         this.getRange = function (dates) { return dates; };
-        this.flatten = function (dates, options) {
+        this.flatten = function (userObjects, options) {
             options = options || { startDay: null, endDay: null };
-            var objects = dates.map(function (d) {
+            var objects = userObjects.map(function (d) {
                 var range = _this.getRange(d);
                 range.value = d;
                 return range;
@@ -52,6 +52,10 @@ var Clash = (function () {
                 if (ceilIsHigher)
                     upperBound = ceil;
             });
+            if (!lowerBound || !upperBound) {
+                lowerBound = _this.floorDate(new Date());
+                upperBound = _this.ceilingDate(new Date());
+            }
             return {
                 start: lowerBound,
                 end: upperBound

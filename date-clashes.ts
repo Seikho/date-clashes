@@ -13,10 +13,10 @@ export class Clash implements Types.Clash {
 
     getRange: RangeGetter = (dates: any) => dates;
 
-    flatten = (dates: any[], options?: Options) => {
+    flatten = (userObjects: any[], options?: Options) => {
         options = options || { startDay: null, endDay: null };
 
-        var objects = dates.map(d => {
+        var objects = userObjects.map(d => {
             var range = this.getRange(d);
             range.value = d;
             return range;
@@ -75,6 +75,11 @@ export class Clash implements Types.Clash {
             var ceilIsHigher = upperBound == null || ceil > upperBound;
             if (ceilIsHigher) upperBound = ceil;
         });
+        
+        if (!lowerBound || !upperBound) {
+            lowerBound = this.floorDate(new Date());
+            upperBound = this.ceilingDate(new Date());
+        }
 
         return {
             start: lowerBound,
